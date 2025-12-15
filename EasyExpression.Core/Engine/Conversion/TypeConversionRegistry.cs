@@ -10,7 +10,7 @@ namespace EasyExpression.Core.Engine.Conversion
 		public void Register(ITypeConverter converter)
 		{
 			if (converter == null) throw new ArgumentNullException(nameof(converter));
-			_converters.Insert(0, converter); // 后注册的优先覆盖
+			_converters.Insert(0, converter); // Later registrations take precedence
 		}
 
 		public void Register<TIn, TOut>(Func<TIn, TOut> convert)

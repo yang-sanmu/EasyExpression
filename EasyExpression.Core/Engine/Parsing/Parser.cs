@@ -41,16 +41,16 @@ namespace EasyExpression.Core.Engine.Parsing
 			SkipNewLines();
 			if (_current.Kind == TokenKind.LBrace)
 			{
-				// 支持外围使用花括号包裹整个脚本
+				// Allow wrapping the whole script with outer braces
 				return ParseBlockWithBraces();
 			}
 			var block = new Block(_current.Line, _current.Column);
 			while (_current.Kind != TokenKind.EOF && _current.Kind != TokenKind.RBrace)
 			{
-				// 确保在解析语句前跳过所有空行
+				// Ensure all blank lines are skipped before parsing a statement
 				SkipNewLines();
 				
-				// 再次检查是否到达结束条件
+				// Re-check whether we have reached the end condition
 				if (_current.Kind == TokenKind.EOF || _current.Kind == TokenKind.RBrace)
 				{
 					break;
@@ -73,12 +73,12 @@ namespace EasyExpression.Core.Engine.Parsing
 				{
 					case "set":
 						Expect(TokenKind.LParen, "expected '('");
-						SkipNewLines(); // 跳过可能的换行符
+						SkipNewLines(); // Skip possible newlines
 						string fieldName;
 						string? fieldType = null;
 						if (_current.Kind == TokenKind.LBracket)
 						{
-							// 支持 set([field name], expr) 以及 set([field name:type], expr)
+							// Support set([field name], expr) and set([field name:type], expr)
 							_lexer.BeginFieldName();
 							Next();
 							var nameTok = Expect(TokenKind.Identifier, "expected field name");
@@ -97,9 +97,9 @@ namespace EasyExpression.Core.Engine.Parsing
 							fieldName = fieldTok.Text;
 						}
 						Expect(TokenKind.Comma, "expected ','");
-						SkipNewLines(); // 跳过可能的换行符
+						SkipNewLines(); // Skip possible newlines
 						var expr = ParseExpression();
-						SkipNewLines(); // 跳过可能的换行符
+						SkipNewLines(); // Skip possible newlines
 						Expect(TokenKind.RParen, "expected ')'");
 						return new SetStmt(fieldName, expr, line, col, fieldType);
 					case "msg":
@@ -173,16 +173,16 @@ namespace EasyExpression.Core.Engine.Parsing
 			SkipNewLines();
 			while (_current.Kind != TokenKind.RBrace)
 			{
-				// 如果遇到EOF，避免无限循环
+				// If EOF is encountered, avoid infinite loops
 				if (_current.Kind == TokenKind.EOF)
 				{
 					throw new ExpressionParseException("unexpected end of file, expected '}'", ExpressionErrorCode.UnexpectedEndOfFile, _current.Line, _current.Column);
 				}
 				
-				// 确保在解析语句前跳过所有空行
+				// Ensure all blank lines are skipped before parsing a statement
 				SkipNewLines();
 				
-				// 再次检查是否到达右花括号
+				// Re-check whether we have reached the closing brace
 				if (_current.Kind == TokenKind.RBrace)
 				{
 					break;
@@ -196,7 +196,7 @@ namespace EasyExpression.Core.Engine.Parsing
 			return block;
 		}
 
-		// 表达式优先级：按 C#
+		// Expression precedence: same as C#
 		// Or ||
 		private Expr ParseExpression() => ParseOr();
 		private Expr ParseOr()
@@ -281,7 +281,7 @@ namespace EasyExpression.Core.Engine.Parsing
 
 		private Expr ParseUnary()
 		{
-			// 支持一元负号与逻辑非
+			// Support unary minus and logical not
 			if (_current.Kind == TokenKind.Minus || _current.Kind == TokenKind.Bang)
 			{
 				var tok = _current; Next();
@@ -294,11 +294,11 @@ namespace EasyExpression.Core.Engine.Parsing
 
 		private Expr ParsePrimary()
 		{
-			// 字段 [name[:type]] 起始于 '['
+			// Field [name[:type]] starts with '['
 			if (_current.Kind == TokenKind.LBracket)
 			{
 				var line = _current.Line; var col = _current.Column;
-				// 告知词法器进入字段名模式
+				// Tell the lexer to enter field-name mode
 				_lexer.BeginFieldName();
 				Next();
 				var nameTok = Expect(TokenKind.Identifier, "expected field name");
@@ -325,7 +325,7 @@ namespace EasyExpression.Core.Engine.Parsing
 			if (_current.Kind == TokenKind.Identifier)
 			{
 				var ident = _current.Text; var line = _current.Line; var col = _current.Column; Next();
-				// 字面量大小写敏感
+				// Literal keywords are case-sensitive
 				if (ident == "true") return new LiteralExpr(true, line, col);
 				if (ident == "false") return new LiteralExpr(false, line, col);
 				if (ident == "null") return new LiteralExpr(null, line, col);
@@ -334,7 +334,7 @@ namespace EasyExpression.Core.Engine.Parsing
 
 				if (Match(TokenKind.LParen))
 				{
-					// 函数调用
+					// Function call
 					var args = new List<Expr>();
 					if (!Match(TokenKind.RParen))
 					{

@@ -19,7 +19,7 @@ namespace EasyExpression
             engine.Services.ShouldNotBeNull();
             engine.Services.Options.ShouldNotBeNull();
             
-            // 检查默认选项值
+            // Check default option values
             engine.Services.Options.MaxDepth.ShouldBe(64);
             engine.Services.Options.MaxNodes.ShouldBe(2000);
             engine.Services.Options.TimeoutMilliseconds.ShouldBe(2000);
@@ -51,7 +51,7 @@ namespace EasyExpression
             var contributor = new TestContributor();
             var engine = factory.Create(contributors: new[] { contributor });
 
-            // 验证自定义函数已注册
+            // Verify custom function has been registered
             var script = @"{ set(a, TestFunction()) }";
             var res = engine.Execute(script, new Dictionary<string, object?>());
             res.HasError.ShouldBeFalse();

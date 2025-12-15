@@ -23,7 +23,7 @@ namespace EasyExpression.Core.Engine.Functions
 	}
 
 	/// <summary>
-	/// 引擎扩展贡献者：用于在上层框架（如 ABP）中集中注册函数与转换器。
+	/// Engine extension contributor: used to register functions and converters in an upper-layer framework (e.g., ABP).
 	/// </summary>
 	public interface IEngineContributor
 	{

@@ -73,22 +73,22 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(1.235m); // 自动四舍五入到3位
-            result.Assignments["b"].ShouldBe(2.345m); // Round函数使用标准舍入模式
+            result.Assignments["a"].ShouldBe(1.235m); // Automatically rounded to 3 digits
+            result.Assignments["b"].ShouldBe(2.345m); // Round uses the standard rounding mode
         }
 
         [Fact]
         public void TreatNullStringAsEmpty_Affects_String_Operations()
         {
             var engine = CreateEngine(o => o.TreatNullStringAsEmpty = false);
-            // 当TreatNullStringAsEmpty为false时，null值在表达式中仍然表现为null
-            // 但在字符串拼接时会使用转换器处理
+            // When TreatNullStringAsEmpty is false, null still behaves as null in expressions
+            // but converters will be used during string concatenation
             var script = @"{ set(a, null + 'test') }";
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe("test"); // null转换为空字符串后拼接
+            result.Assignments["a"].ShouldBe("test"); // null is converted to empty string before concatenation
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace EasyExpression
             var result = engine.Execute(script, inputs);
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(5m); // null被视为0
+            result.Assignments["a"].ShouldBe(5m); // null is treated as 0
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace EasyExpression
             var result = engine.Execute(script, inputs);
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(true); // null被视为false，false || true = true
+            result.Assignments["a"].ShouldBe(true); // null is treated as false, false || true = true
         }
 
         [Fact]
@@ -144,8 +144,8 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(false); // 区分大小写
-            result.Assignments["b"].ShouldBe(false); // 区分大小写
+            result.Assignments["a"].ShouldBe(false); // Case-sensitive
+            result.Assignments["b"].ShouldBe(false); // Case-sensitive
         }
 
         [Fact]
@@ -156,9 +156,9 @@ namespace EasyExpression
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
-            // 实际测试发现引擎可能仍允许某些类型转换
+            // In practice, the engine may still allow some type conversions
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(true); // 字符串'1'与数字1被认为相等
+            result.Assignments["a"].ShouldBe(true); // String '1' and number 1 are considered equal
         }
 
         [Fact]
@@ -177,7 +177,7 @@ namespace EasyExpression
             result.HasError.ShouldBeFalse();
             result.Assignments["a"].ShouldBe(true);
             result.Assignments["b"].ShouldBe(true);
-            result.Assignments["c"].ShouldBe(false); // 字符串比较
+            result.Assignments["c"].ShouldBe(false); // String comparison
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(false); // 转换为字符串后比较
+            result.Assignments["a"].ShouldBe(false); // Compared after converting to string
         }
 
         [Fact]
@@ -206,9 +206,9 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(3m); // 数值相加
-            result.Assignments["b"].ShouldBe("ab"); // 字符串拼接
-            result.Assignments["c"].ShouldBe("1b"); // 字符串拼接
+            result.Assignments["a"].ShouldBe(3m); // Numeric addition
+            result.Assignments["b"].ShouldBe("ab"); // String concatenation
+            result.Assignments["c"].ShouldBe("1b"); // String concatenation
         }
 
         [Fact]
@@ -217,7 +217,7 @@ namespace EasyExpression
             var engine = CreateEngine(o =>
             {
                 o.StrictFieldNameValidation = true;
-                o.FieldNameValidator = name => name.Contains("-"); // 只允许包含连字符的字段名
+                o.FieldNameValidator = name => name.Contains("-"); // Only allow field names that contain hyphens
             });
             var script = @"
             {
@@ -227,7 +227,7 @@ namespace EasyExpression
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
-            // 实际行为：字段名验证可能在不同阶段或以不同方式工作
+            // Actual behavior: field-name validation may work at different stages or in different ways
             result.HasError.ShouldBeFalse();
             result.Assignments["valid-field"].ShouldBe("ok");
             result.Assignments["invalid_field"].ShouldBe("fail");
@@ -237,7 +237,7 @@ namespace EasyExpression
         public void RegexTimeoutMilliseconds_Prevents_Long_Running_Regex()
         {
             var engine = CreateEngine(o => o.RegexTimeoutMilliseconds = 10);
-            var evilPattern = @"^(a+)+$"; // 灾难回溯模式
+            var evilPattern = @"^(a+)+$"; // Catastrophic backtracking pattern
             var input = new string('a', 100) + "b";
             var script = $"{{ set(a, RegexMatch('{input}', '{evilPattern}')) }}";
 
@@ -281,10 +281,10 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(false); // 区分大小写
-            result.Assignments["b"].ShouldBe(true); // 数值友好比较
-            result.Assignments["c"].ShouldBe(5m); // 数值相加
-            result.Assignments["d"].ShouldBe(2.6m); // 四舍五入到1位
+            result.Assignments["a"].ShouldBe(false); // Case-sensitive
+            result.Assignments["b"].ShouldBe(true); // Number-friendly comparison
+            result.Assignments["c"].ShouldBe(5m); // Numeric addition
+            result.Assignments["d"].ShouldBe(2.6m); // Rounded to 1 digit
         }
     }
 }

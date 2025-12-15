@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EasyExpression.Core\EasyExpression.Core.csproj" />
+    <ProjectReference Include="..\EasyExpression.Core\EasyExpression.Core.csproj" />
   </ItemGroup>
 
 </Project>

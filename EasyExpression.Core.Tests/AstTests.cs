@@ -345,7 +345,7 @@ namespace EasyExpression
 
             var compiled = engine.Compile(script);
 
-            // 验证节点包含位置信息
+            // Verify nodes contain position info
             compiled.Line.ShouldBeGreaterThan(0);
             compiled.Column.ShouldBeGreaterThan(0);
 
@@ -361,20 +361,20 @@ namespace EasyExpression
         {
             var engine = CreateEngine();
             
-            // 简单表达式：{ set(a, 1) }
-            // 预期节点：Block(1) + SetStmt(1) + LiteralExpr(1) = 3
+            // Simple expression: { set(a, 1) }
+            // Expected nodes: Block(1) + SetStmt(1) + LiteralExpr(1) = 3
             var simpleScript = "{ set(a, 1) }";
             var simpleCompiled = engine.Compile(simpleScript);
             simpleCompiled.ShouldNotBeNull();
 
-            // 复杂表达式：{ set(a, (1 + 2) * 3) }
-            // 预期节点：Block(1) + SetStmt(1) + BinaryExpr(*)(1) + BinaryExpr(+)(1) + LiteralExpr(1)(1) + LiteralExpr(2)(1) + LiteralExpr(3)(1) = 7
+            // Complex expression: { set(a, (1 + 2) * 3) }
+            // Expected nodes: Block(1) + SetStmt(1) + BinaryExpr(*)(1) + BinaryExpr(+)(1) + LiteralExpr(1)(1) + LiteralExpr(2)(1) + LiteralExpr(3)(1) = 7
             var complexScript = "{ set(a, (1 + 2) * 3) }";
             var complexCompiled = engine.Compile(complexScript);
             complexCompiled.ShouldNotBeNull();
 
-            // 函数调用：{ set(a, Sum(1, 2, 3)) }
-            // 预期节点：Block(1) + SetStmt(1) + CallExpr(1) + LiteralExpr(1)(1) + LiteralExpr(2)(1) + LiteralExpr(3)(1) = 6
+            // Function call: { set(a, Sum(1, 2, 3)) }
+            // Expected nodes: Block(1) + SetStmt(1) + CallExpr(1) + LiteralExpr(1)(1) + LiteralExpr(2)(1) + LiteralExpr(3)(1) = 6
             var functionScript = "{ set(a, Sum(1, 2, 3)) }";
             var functionCompiled = engine.Compile(functionScript);
             functionCompiled.ShouldNotBeNull();
@@ -435,7 +435,7 @@ namespace EasyExpression
         [Fact]
         public void AST_BinaryOp_Enum_Values()
         {
-            // 验证所有BinaryOp枚举值
+            // Verify all BinaryOp enum values
             var arithmeticOps = new[] { BinaryOp.Add, BinaryOp.Sub, BinaryOp.Mul, BinaryOp.Div, BinaryOp.Mod };
             var comparisonOps = new[] { BinaryOp.Gt, BinaryOp.Lt, BinaryOp.Ge, BinaryOp.Le, BinaryOp.Eq, BinaryOp.Ne };
             var logicalOps = new[] { BinaryOp.And, BinaryOp.Or };

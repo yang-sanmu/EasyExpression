@@ -6,7 +6,7 @@ using EasyExpression.Core.Engine.Ast;
 namespace EasyExpression.Core.Engine.Runtime
 {
 	/// <summary>
-	/// 脚本分析器，用于收集脚本的详细验证信息
+	/// Script analyzer used to collect detailed validation info for a script.
 	/// </summary>
 	internal sealed class ScriptAnalyzer
 	{
@@ -54,7 +54,7 @@ namespace EasyExpression.Core.Engine.Runtime
 					AnalyzeLocalStatement(local);
 					break;
 				case ReturnStmt:
-					// 控制流语句，不需要特殊处理
+					// Control-flow statement; no special handling needed
 					break;
 				case MsgStmt msg:
 					AnalyzeMsgStatement(msg);
@@ -100,8 +100,8 @@ namespace EasyExpression.Core.Engine.Runtime
 
 		private void AnalyzeMsgStatement(MsgStmt msg)
 		{
-			// MsgStmt 使用文本字段，不需要表达式分析
-			// 这里可以添加对消息复杂度的统计
+			// MsgStmt uses text fields; no expression analysis needed
+			// Complexity metrics for messages could be added here
 		}
 
 		private void AnalyzeAssertStatement(AssertStmt assert)
@@ -128,7 +128,7 @@ namespace EasyExpression.Core.Engine.Runtime
 					AnalyzeFieldReference(field);
 					break;
 				case LiteralExpr:
-					// 字面量，无需特殊处理
+					// Literal; no special handling needed
 					break;
 			}
 		}
@@ -180,7 +180,7 @@ namespace EasyExpression.Core.Engine.Runtime
 				_result.UsedFunctions.Add(func.Name);
 			}
 
-			// 检查函数是否存在
+			// Check whether the function exists
 			try
 			{
 				_services.Functions.Resolve(func.Name);

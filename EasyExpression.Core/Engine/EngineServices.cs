@@ -6,7 +6,7 @@ using EasyExpression.Core.Engine.Functions.BuiltIns;
 namespace EasyExpression.Core.Engine
 {
     /// <summary>
-    /// 引擎服务聚合：包含选项、函数与转换器注册表。
+    /// Engine services aggregation: includes options, function registry, and converter registry.
     /// </summary>
     public sealed class EngineServices
     {
@@ -24,7 +24,7 @@ namespace EasyExpression.Core.Engine
             RegisterBuiltInFunctions();
             RegisterBuiltInConverters();
 
-            // 允许外部贡献者扩展（显式调用 UseContributor 添加）
+            // Allow external contributors to extend (explicitly add via UseContributor)
         }
 
         public EngineServices UseContributor(Functions.IEngineContributor contributor)
@@ -70,15 +70,15 @@ namespace EasyExpression.Core.Engine
 
         private void RegisterBuiltInConverters()
         {
-            // 常用 to string
+            // Common to-string conversions
             Converters.Register(new SimpleConverter<object, string>(v => v?.ToString() ?? string.Empty));
             Converters.Register(new SimpleConverter<decimal, string>(v => v.ToString(System.Globalization.CultureInfo.InvariantCulture)));
             Converters.Register(new SimpleConverter<bool, string>(v => v ? "true" : "false"));
             Converters.Register(new SimpleConverter<DateTime, string>(v => v.ToString(Options.DateTimeFormat)));
 
             // to decimal
-            // 注意：string -> decimal 使用 TryParse 语义，不抛异常；
-            // 转换失败时返回 false，由上层在有位置信息的上下文中统一抛出 ExpressionRuntimeException。
+            // Note: string -> decimal uses TryParse semantics and does not throw.
+            // On conversion failure it returns false; the upper layer throws ExpressionRuntimeException with position info.
             Converters.Register(new StringToDecimalConverter());
             Converters.Register(new SimpleConverter<int, decimal>(v => v));
             Converters.Register(new SimpleConverter<long, decimal>(v => v));
@@ -91,16 +91,16 @@ namespace EasyExpression.Core.Engine
             Converters.Register(new SimpleConverter<uint, decimal>(v => v));
             Converters.Register(new SimpleConverter<ulong, decimal>(v => (decimal)v));
 
-            // to bool（使用 TryParse 语义，失败返回 false，不抛异常）
+            // to bool (uses TryParse semantics; on failure returns false and does not throw)
             Converters.Register(new StringToBoolConverter());
             Converters.Register(new NullableAwareConverter<bool>(Options, (string s) =>
             {
                 if (bool.TryParse(s, out var b)) return b;
-                // 返回值不会被使用；外层会捕获并返回 false
+                // Return value will not be used; the outer layer will catch and return false
                 throw new FormatException("Invalid boolean");
             }));
 
-            // to datetime（使用 TryParseExact 语义，失败返回 false，不抛异常）
+            // to datetime (uses TryParseExact semantics; on failure returns false and does not throw)
             Converters.Register(new StringToDateTimeConverter(Options));
             Converters.Register(new NullableAwareConverter<DateTime>(Options, (string s) =>
             {

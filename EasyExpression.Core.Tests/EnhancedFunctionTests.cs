@@ -84,7 +84,7 @@ namespace EasyExpression
 			var result = engine.Execute(script, new Dictionary<string, object?>());
 
 			result.HasError.ShouldBeTrue();
-			// 检查实际的错误消息格式
+			// Verify the actual error message format
 			result.ErrorMessage.ShouldContain("Invalid pattern");
 		}
 
@@ -93,25 +93,25 @@ namespace EasyExpression
 		{
 			var engine = CreateEngine();
 			
-			// 测试起始索引超出范围
+			// Test start index out of range
 			var script1 = @"{ set(a, Substring('hello', 10)) }";
 			var result1 = engine.Execute(script1, new Dictionary<string, object?>());
 			result1.HasError.ShouldBeTrue();
 			result1.ErrorMessage.ShouldContain("start index 10 is beyond string length 5");
 
-			// 测试长度超出范围
+			// Test length out of range
 			var script2 = @"{ set(a, Substring('hello', 2, 10)) }";
 			var result2 = engine.Execute(script2, new Dictionary<string, object?>());
 			result2.HasError.ShouldBeTrue();
 			result2.ErrorMessage.ShouldContain("start index 2 + length 10 = 12 is beyond string length 5");
 
-			// 测试负数索引
+			// Test negative index
 			var script3 = @"{ set(a, Substring('hello', -1)) }";
 			var result3 = engine.Execute(script3, new Dictionary<string, object?>());
 			result3.HasError.ShouldBeTrue();
 			result3.ErrorMessage.ShouldContain("must be at least 0");
 
-			// 测试负数长度
+			// Test negative length
 			var script4 = @"{ set(a, Substring('hello', 0, -1)) }";
 			var result4 = engine.Execute(script4, new Dictionary<string, object?>());
 			result4.HasError.ShouldBeTrue();
@@ -123,13 +123,13 @@ namespace EasyExpression
 		{
 			var engine = CreateEngine();
 
-			// 测试参数太少 - 检查实际的错误消息格式
+			// Test too few arguments - verify the actual error message format
 			var script1 = @"{ set(a, ToUpper()) }";
 			var result1 = engine.Execute(script1, new Dictionary<string, object?>());
 			result1.HasError.ShouldBeTrue();
 			result1.ErrorMessage.ShouldContain("ToUpper expects 1 arg");
 
-			// 测试参数太多
+			// Test too many arguments
 			var script2 = @"{ set(a, ToUpper('a', 'b')) }";
 			var result2 = engine.Execute(script2, new Dictionary<string, object?>());
 			result2.HasError.ShouldBeTrue();
@@ -141,25 +141,25 @@ namespace EasyExpression
 		{
 			var engine = CreateEngine();
 
-			// 测试无法转换为数字的情况
+			// Test cannot-convert-to-number case
 			var script1 = @"{ set(a, Max('not_a_number')) }";
 			var result1 = engine.Execute(script1, new Dictionary<string, object?>());
 			result1.HasError.ShouldBeTrue();
 			result1.ErrorMessage.ShouldContain("Cannot parse decimal: not_a_number");
 
-			// 测试 Round 函数 - 检查实际行为，2.5会被自动转换为2
+			// Test Round - verify actual behavior; 2.5 may be automatically converted to 2
 			var script2 = @"{ set(a, Round(3.14159, 2.5)) }";
 			var result2 = engine.Execute(script2, new Dictionary<string, object?>());
-			// Round函数可能接受decimal并自动转换为int，所以这个可能不会报错
-			// 我们只检查是否有合理的结果
+			// Round may accept decimal and auto-convert to int, so this might not error
+			// We only check that the result is reasonable
 			if (result2.HasError)
 			{
-				// 如果有错误，检查错误信息是否合理
+				// If there is an error, verify the message is reasonable
 				result2.ErrorMessage.ShouldNotBeNullOrEmpty();
 			}
 			else
 			{
-				// 如果没有错误，检查结果是否合理
+				// If there is no error, verify the result is reasonable
 				result2.Assignments.ShouldContainKey("a");
 			}
 		}
@@ -174,7 +174,7 @@ namespace EasyExpression
 			var result = engine.Execute(script, inputs);
 
 			result.HasError.ShouldBeFalse();
-			result.Assignments["a"].ShouldBe(false); // null被转换为空字符串，不匹配'test'
+			result.Assignments["a"].ShouldBe(false); // null is converted to empty string, so it does not match 'test'
 		}
 
 		[Fact]
@@ -187,16 +187,16 @@ namespace EasyExpression
 			var result = engine.Execute(script, inputs);
 
 			result.HasError.ShouldBeFalse();
-			result.Assignments["a"].ShouldBe(string.Empty); // null被转换为空字符串
+			result.Assignments["a"].ShouldBe(string.Empty); // null is converted to empty string
 		}
 
 		[Fact]
 		public void RegexMatch_Timeout_Returns_Clear_Error()
 		{
 			var engine = CreateEngine(o => o.RegexTimeoutMilliseconds = 1);
-			// 这是一个会导致灾难性回溯的正则表达式
+			// This regex can cause catastrophic backtracking
 			var evilPattern = @"^(a+)+$";
-			var input = new string('a', 1000) + "b"; // 末尾不匹配会触发回溯
+			var input = new string('a', 1000) + "b"; // The non-matching suffix triggers backtracking
 			var script = $@"{{ set(a, RegexMatch('{input}', '{evilPattern}')) }}";
 
 			var result = engine.Execute(script, new Dictionary<string, object?>());

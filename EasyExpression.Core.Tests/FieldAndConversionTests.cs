@@ -275,7 +275,7 @@ namespace EasyExpression
 		public void DateTime_Type_Annotation_Invalid_String_Should_Error()
 		{
 			var e = CreateEngine();
-			var inputs = new Dictionary<string, object?> { {"T", "2024/01/01"} }; // 与默认格式不匹配
+			var inputs = new Dictionary<string, object?> { {"T", "2024/01/01"} }; // Does not match the default format
 			var script = @"
 			{
 				set(x, [T:datetime])

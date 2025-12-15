@@ -17,7 +17,7 @@ namespace EasyExpression.Core.Engine.Functions
 		public void Register(IFunction func)
 		{
 			if (func == null) throw new ArgumentNullException(nameof(func));
-			_functions[func.Name] = func; // 覆盖式注册
+			_functions[func.Name] = func; // Overwrite registration
 		}
 
 		public IFunction Resolve(string name)

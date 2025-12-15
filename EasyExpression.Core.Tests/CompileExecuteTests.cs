@@ -44,14 +44,14 @@ namespace EasyExpression
             }";
             var inputs = new Dictionary<string, object?>();
 
-            // 直接执行
+            // Direct execute
             var directResult = engine.Execute(script, inputs);
             
-            // 编译后执行
+            // Execute after compiling
             var compiled = engine.Compile(script);
             var compiledResult = engine.Execute(compiled, inputs);
 
-            // 结果应该一致
+            // Results should match
             directResult.HasError.ShouldBe(compiledResult.HasError);
             directResult.Assignments["a"].ShouldBe(compiledResult.Assignments["a"]);
             directResult.Assignments["b"].ShouldBe(compiledResult.Assignments["b"]);
@@ -69,19 +69,19 @@ namespace EasyExpression
             
             var compiled = engine.Compile(script);
 
-            // 第一次执行
+            // First execution
             var inputs1 = new Dictionary<string, object?> { {"x", 5}, {"y", 3} };
             var result1 = engine.Execute(compiled, inputs1);
             result1.HasError.ShouldBeFalse();
             result1.Assignments["result"].ShouldBe(13m); // 5*2+3=13
 
-            // 第二次执行，不同输入
+            // Second execution with different inputs
             var inputs2 = new Dictionary<string, object?> { {"x", 10}, {"y", 7} };
             var result2 = engine.Execute(compiled, inputs2);
             result2.HasError.ShouldBeFalse();
             result2.Assignments["result"].ShouldBe(27m); // 10*2+7=27
 
-            // 第三次执行，不同输入
+            // Third execution with different inputs
             var inputs3 = new Dictionary<string, object?> { {"x", 0}, {"y", 100} };
             var result3 = engine.Execute(compiled, inputs3);
             result3.HasError.ShouldBeFalse();
@@ -92,7 +92,7 @@ namespace EasyExpression
         public void Compile_With_Invalid_Script_Should_Throw()
         {
             var engine = CreateEngine();
-            var invalidScript = @"{ set(a, 1 + ) }"; // 语法错误
+            var invalidScript = @"{ set(a, 1 + ) }"; // Syntax error
 
             Should.Throw<Exception>(() => engine.Compile(invalidScript));
         }
@@ -101,7 +101,7 @@ namespace EasyExpression
         public void Compile_Exceeds_MaxNodes_Should_Throw()
         {
             var engine = CreateEngine(o => o.MaxNodes = 2);
-            var script = @"{ set(a, 1) set(b, 2) set(c, 3) }"; // 超过节点限制
+            var script = @"{ set(a, 1) set(b, 2) set(c, 3) }"; // Exceeds node limit
 
             Should.Throw<Exception>(() => engine.Compile(script));
         }
@@ -112,9 +112,9 @@ namespace EasyExpression
             var engine = CreateEngine();
             var script = @"{ set(a, [unknown_field]) }";
             
-            var compiled = engine.Compile(script); // 编译成功
+            var compiled = engine.Compile(script); // Compiled successfully
             var inputs = new Dictionary<string, object?>();
-            var result = engine.Execute(compiled, inputs); // 运行时错误
+            var result = engine.Execute(compiled, inputs); // Runtime error
 
             result.HasError.ShouldBeTrue();
             result.ErrorMessage.ShouldContain("Unknown field");
@@ -155,13 +155,13 @@ namespace EasyExpression
             
             var compiled = engine.Compile(script);
 
-            // 测试 true 分支
+            // Test true branch
             var inputsTrue = new Dictionary<string, object?> { {"condition", true} };
             var resultTrue = engine.Execute(compiled, inputsTrue);
             resultTrue.HasError.ShouldBeFalse();
             resultTrue.Assignments["result"].ShouldBe("true_branch");
 
-            // 测试 false 分支
+            // Test false branch
             var inputsFalse = new Dictionary<string, object?> { {"condition", false} };
             var resultFalse = engine.Execute(compiled, inputsFalse);
             resultFalse.HasError.ShouldBeFalse();
@@ -175,7 +175,7 @@ namespace EasyExpression
             var script = @"{ set(result, [input:decimal] * 2) }";
             var compiled = engine.Compile(script);
 
-            // 模拟并发执行（虽然这个测试不是真正的并发测试，但验证了基本的重用安全性）
+            // Simulate concurrent executions (not truly concurrent, but validates basic reuse safety)
             var results = new List<decimal>();
             for (int i = 0; i < 10; i++)
             {
@@ -185,7 +185,7 @@ namespace EasyExpression
                 results.Add((decimal)result.Assignments["result"]!);
             }
 
-            // 验证结果
+            // Verify results
             for (int i = 0; i < 10; i++)
             {
                 results[i].ShouldBe(i * 2);

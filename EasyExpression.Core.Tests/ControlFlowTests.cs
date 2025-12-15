@@ -60,7 +60,7 @@ namespace EasyExpression
 			}";
 			var res = eng.Execute(script, new Dictionary<string, object?>());
 			res.Assignments["a"].ShouldBe(1m);
-			// return 之后不再执行
+			// No more statements should execute after return
 			res.Assignments.ContainsKey("b").ShouldBeFalse();
 		}
 

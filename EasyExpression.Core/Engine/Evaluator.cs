@@ -24,7 +24,7 @@ namespace EasyExpression.Core.Engine
             var ctx = new ExecutionContext(input, _services.Options);
             var result = new ExecutionResult();
             _visitCount = 0;
-            // 统一计时器：使用 ExecutionResult.Stopwatch 作为唯一计时源
+            // Unified timer: use ExecutionResult.Stopwatch as the single timing source
             _stopwatch = result.Stopwatch;
             try
             {
@@ -138,7 +138,7 @@ namespace EasyExpression.Core.Engine
                 case LocalStmt l:
                     {
                         var sig = ExecuteBlock(l.Body, ctx, result, allowReturnLocal: true);
-                        if (sig == FlowSignal.ReturnLocal) return FlowSignal.None; // 截断在 local 内
+                        if (sig == FlowSignal.ReturnLocal) return FlowSignal.None; // Swallow ReturnLocal inside local
                         return sig;
                     }
             }
@@ -165,7 +165,7 @@ namespace EasyExpression.Core.Engine
 
                 case FieldExpr f:
                     {
-                        // 字段名校验：优先使用自定义校验器；否则按 Strict 规则
+                        // Field-name validation: prefer custom validator; otherwise follow Strict rules
                         var validator = _services.Options.FieldNameValidator;
                         if (validator != null)
                         {
@@ -179,13 +179,13 @@ namespace EasyExpression.Core.Engine
                             throw new ExpressionRuntimeException($"Unknown field: {f.Name}", ExpressionErrorCode.UnknownField, f.Line, f.Column);
                         //if (f.TypeAnnotation == null || string.Equals(f.TypeAnnotation, "string", StringComparison.OrdinalIgnoreCase))
                         //{
-                        //    // 字段默认 string：优先通过转换器，确保与 Options.DateTimeFormat 等一致
+                        //    // Default field type is string: prefer converters to keep behavior consistent (e.g., Options.DateTimeFormat)
                         //    if (_services.Converters.TryConvert(value, typeof(string), out var s))
                         //        return s;
                         //    return value?.ToString() ?? string.Empty;
                         //}
                         var target = ResolveType(f.TypeAnnotation, value);
-                        // null 目标类型特化行为
+                        // Special behavior for null based on the target type
                         if (value == null)
                         {
                             if (target == typeof(decimal) && _services.Options.TreatNullDecimalAsZero)
@@ -236,7 +236,7 @@ namespace EasyExpression.Core.Engine
             }
             catch (ArgumentException ex)
             {
-                // 未注册的函数
+                // Function not registered
                 throw new ExpressionRuntimeException(ex.Message, ExpressionErrorCode.UnknownFunction, c.Line, c.Column, ex);
             }
 
@@ -248,24 +248,24 @@ namespace EasyExpression.Core.Engine
             }
             catch (ExpressionException)
             {
-                // 透传引擎内部抛出的具备语义的异常
+                // Propagate semantic exceptions thrown by the engine
                 throw;
             }
             catch (Exception ex)
             {
-                // 已解析到函数，但调用失败（参数个数/类型/业务校验等）
+                // Function resolved, but invocation failed (arg count/type/business validation, etc.)
                 throw new ExpressionRuntimeException(ex.Message, ExpressionErrorCode.InvalidFunctionArguments, c.Line, c.Column, ex);
             }
         }
 
         private object EvalBinary(BinaryExpr b, ExecutionContext ctx, int depth)
         {
-            // 短路逻辑：先评估左侧，按需评估右侧
+            // Short-circuit logic: evaluate left first, evaluate right only if needed
             if (b.Op == BinaryOp.And)
             {
                 var leftVal = EvaluateExpr(b.Left, ctx, depth + 1);
                 var leftBool = ToBool(leftVal);
-                if (!leftBool) return false; // 短路
+                if (!leftBool) return false; // Short-circuit
                 var rightVal = EvaluateExpr(b.Right, ctx, depth + 1);
                 return leftBool && ToBool(rightVal);
             }
@@ -273,7 +273,7 @@ namespace EasyExpression.Core.Engine
             {
                 var leftVal = EvaluateExpr(b.Left, ctx, depth + 1);
                 var leftBool = ToBool(leftVal);
-                if (leftBool) return true; // 短路
+                if (leftBool) return true; // Short-circuit
                 var rightVal = EvaluateExpr(b.Right, ctx, depth + 1);
                 return ToBool(rightVal);
             }
@@ -337,11 +337,13 @@ namespace EasyExpression.Core.Engine
 
         private bool CompareEquality(BinaryOp op, object? l, object? r, int line, int column)
         {
-            // 若任一侧为字符串 => 根据策略决定比较行为
+            // If either side is a string, decide comparison behavior based on the selected strategy
             if (l is string || r is string)
             {
-                // MixedNumericOnly 策略：仅当一侧为数字且另一侧为字符串时尝试数值比较；
-                // 双字符串始终按字符串比较；其余不匹配退回字符串比较。
+                // MixedNumericOnly strategy:
+                // - Only when one side is a number and the other side is a string, try numeric comparison.
+                // - If both sides are strings, always compare as strings.
+                // - For other mismatches, fall back to string comparison.
                 if (_services.Options.EqualityCoercion == EqualityCoercionMode.MixedNumericOnly)
                 {
                     if (l is string && r is string)
@@ -397,7 +399,7 @@ namespace EasyExpression.Core.Engine
             {
                 var eq = ld == rd; return op == BinaryOp.Eq ? eq : !eq;
             }
-            // 类型不匹配：在 Permissive 模式下回退为字符串比较，否则报错
+            // Type mismatch: in Permissive mode, fall back to string comparison; otherwise throw
             if (_services.Options.EqualityCoercion == EqualityCoercionMode.Permissive || _services.Options.EqualityCoercion == EqualityCoercionMode.MixedNumericOnly)
             {
                 var ls2 = l?.ToString() ?? string.Empty;
@@ -410,18 +412,18 @@ namespace EasyExpression.Core.Engine
 
         private bool CompareRelational(BinaryOp op, object? l, object? r, int line, int column)
         {
-            // 分类：严格的运行时数字类型与 DateTime 类型（不将字符串视为数字/时间类型）
+            // Categorization: strict runtime numeric types and DateTime types (do not treat strings as numbers/datetimes)
             bool lIsNum = IsStrictNumberType(l);
             bool rIsNum = IsStrictNumberType(r);
             bool lIsDt = l is DateTime;
             bool rIsDt = r is DateTime;
 
-            // 4. 一侧是时间，另一侧是数字，报错退出
+            // 4. One side is datetime and the other is number: error out
             if ((lIsDt && rIsNum) || (rIsDt && lIsNum))
                 throw new ExpressionRuntimeException(
                     "> < >= <= cannot compare datetime with number", ExpressionErrorCode.TypeMismatch, line, column);
 
-            // 双方同为数字：直接按 decimal 比较
+            // Both are numbers: compare as decimal
             if (lIsNum && rIsNum)
             {
                 var ld = ToDecimal(l);
@@ -436,7 +438,7 @@ namespace EasyExpression.Core.Engine
                 };
             }
 
-            // 双方同为时间：直接按 DateTime 比较
+            // Both are datetimes: compare as DateTime
             if (lIsDt && rIsDt)
             {
                 var ld2 = (DateTime)l!;
@@ -451,7 +453,7 @@ namespace EasyExpression.Core.Engine
                 };
             }
 
-            // 3. 一侧是时间，另一侧不是数字/时间：按时间运算（尝试转换另一侧为 DateTime）
+            // 3. One side is datetime, and the other is neither number nor datetime: treat as datetime comparison (try convert the other side to DateTime)
             if (lIsDt && !rIsNum && !rIsDt)
             {
                 var ld3 = (DateTime)l!;
@@ -481,7 +483,7 @@ namespace EasyExpression.Core.Engine
                 };
             }
 
-            // 2. 一侧是数字，另一侧不是数字/时间：按数字运算（将另一侧转换为 decimal）
+            // 2. One side is number, and the other is neither number nor datetime: treat as numeric comparison (convert the other side to decimal)
             if (lIsNum && !rIsNum && !rIsDt)
             {
                 var ld = ToDecimal(l);
@@ -511,7 +513,7 @@ namespace EasyExpression.Core.Engine
                 };
             }
 
-            // 1. 双方均不是数字/时间类型：按数字运算（尝试将两侧都转换为 decimal）
+            // 1. Neither side is number/datetime: treat as numeric comparison (try convert both sides to decimal)
             if (!lIsNum && !rIsNum && !lIsDt && !rIsDt)
             {
                 if (!_services.Converters.TryConvert(l, typeof(decimal), out var lConv) || lConv is not decimal ldec)
@@ -528,7 +530,7 @@ namespace EasyExpression.Core.Engine
                 };
             }
 
-            // 其他组合均属于不支持
+            // Other combinations are not supported
             throw new ExpressionRuntimeException(
                 "> < >= <= only for numbers or datetimes", ExpressionErrorCode.TypeMismatch, line, column);
         }
@@ -588,7 +590,7 @@ namespace EasyExpression.Core.Engine
             if (string.IsNullOrEmpty(type))
             {
                 if(currentValue != null) return currentValue.GetType();
-                else return typeof(string); // 默认 string
+                else return typeof(string); // Default to string
             }
             switch (type!.ToLowerInvariant())
             {
@@ -621,16 +623,16 @@ namespace EasyExpression.Core.Engine
 
         private void CheckLimits(int line, int column, int depth)
         {
-            // 访问计数
+            // Visit count
             _visitCount++;
             if (_visitCount > _services.Options.MaxNodeVisits)
                 throw new ExpressionLimitException("Max node visits exceeded", ExpressionErrorCode.MaxVisitsExceeded, line, column);
 
-            // 深度
+            // Depth
             if (depth > _services.Options.MaxDepth)
                 throw new ExpressionLimitException("Max depth exceeded", ExpressionErrorCode.MaxDepthExceeded, line, column);
 
-            // 超时
+            // Timeout
             if (_services.Options.TimeoutMilliseconds > 0 && _stopwatch != null)
             {
                 if (_stopwatch.ElapsedMilliseconds > _services.Options.TimeoutMilliseconds)

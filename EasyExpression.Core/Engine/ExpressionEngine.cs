@@ -74,7 +74,7 @@ namespace EasyExpression.Core.Engine
 					ErrorColumn = ex.Column,
 					ErrorCode = ex.ErrorCode
 				};
-				// 生成错误片段（该行文本）
+				// Generate error snippet (the line text)
 				if (ex.Line > 0)
 				{
 					SetErrorSnippet(script, res);
@@ -170,33 +170,33 @@ namespace EasyExpression.Core.Engine
 		}
 
 		/// <summary>
-		/// 获取或编译脚本，使用缓存提高性能
+		/// Get or compile a script; uses cache to improve performance.
 		/// </summary>
 		private Ast.Block GetOrCompileScript(string script)
 		{
 			if (script == null)
 				throw new ExpressionParseException("Script cannot be null", ExpressionErrorCode.SyntaxError);
 
-			// 处理空脚本 - 返回空的块
+			// Handle empty script - return an empty block
 			if (script.Length == 0)
 			{
-				return new Ast.Block(1, 1); // 空块，位置在第1行第1列
+				return new Ast.Block(1, 1); // Empty block, position at line 1, column 1
 			}
 
-			// 检查缓存
+			// Check cache
 			if (_services.Options.EnableCompilationCache && _compilationCache.TryGetValue(script, out var cached))
 			{
 				return cached;
 			}
 
-			// 编译新脚本
+			// Compile new script
 			var parser = new Parser(script, _services.Options);
 			var block = parser.ParseBlock();
 			var totalNodes = CountNodes(block);
 			if (totalNodes > _services.Options.MaxNodes)
 				throw new ExpressionLimitException($"Script too large: nodes={totalNodes} > MaxNodes={_services.Options.MaxNodes}", ExpressionErrorCode.ScriptTooLarge, block.Line, block.Column);
 
-			// 缓存编译结果
+			// Cache compiled result
 			if (_services.Options.EnableCompilationCache)
 			{
 				_compilationCache.TryAdd(script, block);
@@ -206,7 +206,7 @@ namespace EasyExpression.Core.Engine
 		}
 
 		/// <summary>
-		/// 获取或缓存脚本行，用于错误报告
+		/// Get or cache script lines for error reporting.
 		/// </summary>
 		private string[] GetOrCacheLines(string script)
 		{
@@ -231,7 +231,7 @@ namespace EasyExpression.Core.Engine
         }
 
         /// <summary>
-        /// 清除编译缓存
+        /// Clear compilation cache.
         /// </summary>
         public void ClearCache()
 		{

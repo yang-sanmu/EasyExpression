@@ -20,7 +20,7 @@ namespace EasyExpression
         public void Parse_Exception_Contains_Position_Information()
         {
             var engine = CreateEngine();
-            var script = "{ set(a, 1 + ) }"; // 语法错误
+            var script = "{ set(a, 1 + ) }"; // Syntax error
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -34,7 +34,7 @@ namespace EasyExpression
         public void Validation_Returns_Parse_Error_Details()
         {
             var engine = CreateEngine();
-            var script = "{ set(a, 1 + ) }"; // 语法错误
+            var script = "{ set(a, 1 + ) }"; // Syntax error
 
             var validation = engine.Validate(script);
 
@@ -59,7 +59,7 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeTrue();
-            result.ErrorLine.ShouldBe(4); // 错误在第4行
+            result.ErrorLine.ShouldBe(4); // Error is on line 4
             result.ErrorColumn.ShouldBeGreaterThan(0);
             result.ErrorMessage.ShouldContain("Divide by zero");
         }
@@ -109,7 +109,7 @@ namespace EasyExpression
         public void Function_Argument_Exception_Contains_Details()
         {
             var engine = CreateEngine();
-            var script = @"{ set(a, ToUpper()) }"; // ToUpper需要1个参数
+            var script = @"{ set(a, ToUpper()) }"; // ToUpper requires 1 argument
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -173,14 +173,14 @@ namespace EasyExpression
 
             result.HasError.ShouldBeTrue();
             result.ErrorMessage.ShouldContain("Divide by zero");
-            result.ErrorLine.ShouldBe(4); // 错误在嵌套的set语句中
+            result.ErrorLine.ShouldBe(4); // Error is inside the nested set statement
         }
 
         [Fact]
         public void Max_Depth_Exception_Contains_Limit_Info()
         {
             var engine = CreateEngine(o => o.MaxDepth = 2);
-            var script = @"{ set(a, (((1+2)+3)+4)) }"; // 超过深度限制
+            var script = @"{ set(a, (((1+2)+3)+4)) }"; // Exceeds depth limit
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -195,7 +195,7 @@ namespace EasyExpression
             var script = @"
             {
                 set(a, 1+1+1+1+1+1+1+1+1+1)
-            }"; // 超过访问次数限制
+            }"; // Exceeds visit count limit
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -214,11 +214,11 @@ namespace EasyExpression
                 set(c, 3)
                 set(d, 4)
                 set(e, 5)
-            }"; // 可能触发超时
+            }"; // May trigger timeout
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
-            // 注意：超时可能不会总是触发，取决于执行速度
+            // Note: timeout may not always trigger, depending on execution speed
             if (result.HasError)
             {
                 result.ErrorMessage.ShouldContain("timeout");

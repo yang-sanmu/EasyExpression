@@ -116,7 +116,7 @@ namespace EasyExpression
 				set(d, RegexMatch('Abc','^a', 'im'))
 			}";
 			var res = e.Execute(script, new Dictionary<string, object?>());
-			res.Assignments["a"].ShouldBe(true); // 受全局 StringComparison 影响，默认忽略大小写
+			res.Assignments["a"].ShouldBe(true); // Affected by global StringComparison (default is ignore-case)
 			res.Assignments["b"].ShouldBe(false);
 			res.Assignments["c"].ShouldBe(true);
 			res.Assignments["d"].ShouldBe(true);
@@ -133,7 +133,7 @@ namespace EasyExpression
 				set(b, RegexMatch('1.1.1','^-?(0|[1-9]\d*)\.\d$'))
 			}";
 			var res = e.Execute(script, new Dictionary<string, object?>());
-			res.Assignments["a"].ShouldBe(true); // 受全局 StringComparison 影响，默认忽略大小写
+			res.Assignments["a"].ShouldBe(true); // Affected by global StringComparison (default is ignore-case)
 			res.Assignments["b"].ShouldBe(false);
 		}
 
@@ -156,8 +156,8 @@ namespace EasyExpression
 		public void RegexMatch_Should_Honor_Timeout()
 		{
 			var e = CreateEngine(o => o.RegexTimeoutMilliseconds = 10);
-			var evil = @"^(a+)+$"; // 经典灾难回溯模式
-			var input = new string('a', 5000) + "b"; // 末尾不匹配触发回溯
+			var evil = @"^(a+)+$"; // Classic catastrophic backtracking pattern
+			var input = new string('a', 5000) + "b"; // The non-matching suffix triggers backtracking
 			var script = $"{{ set(a, RegexMatch('{input}','{evil}')) }}";
 			var res = e.Execute(script, new Dictionary<string, object?>());
 			res.HasError.ShouldBeTrue();

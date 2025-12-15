@@ -23,7 +23,7 @@ namespace EasyExpression
             var engine = CreateEngine();
             var script = "{ set(a, 123.45) }";
 
-            // 通过编译过程检查词法分析
+            // Verify lexing via the compilation pipeline
             var compiled = engine.Compile(script);
 
             compiled.ShouldNotBeNull();
@@ -64,7 +64,7 @@ namespace EasyExpression
         public void Parser_Detects_Syntax_Errors()
         {
             var engine = CreateEngine();
-            var script = "{ set(a, 1 + ) }"; // 缺少操作数
+            var script = "{ set(a, 1 + ) }"; // Missing operand
 
             Should.Throw<Exception>(() => engine.Compile(script));
         }
@@ -168,11 +168,11 @@ namespace EasyExpression
             var engine = CreateEngine();
             var script = @"
             {
-                set(a, 1 + 2 * 3)       // 应该是 1 + (2 * 3) = 7
-                set(b, (1 + 2) * 3)     // 应该是 (1 + 2) * 3 = 9
-                set(c, 2 * 3 + 4)       // 应该是 (2 * 3) + 4 = 10
-                set(d, 10 / 2 + 3)      // 应该是 (10 / 2) + 3 = 8
-                set(e, 10 / (2 + 3))    // 应该是 10 / (2 + 3) = 2
+                set(a, 1 + 2 * 3)       // Should be 1 + (2 * 3) = 7
+                set(b, (1 + 2) * 3)     // Should be (1 + 2) * 3 = 9
+                set(c, 2 * 3 + 4)       // Should be (2 * 3) + 4 = 10
+                set(d, 10 / 2 + 3)      // Should be (10 / 2) + 3 = 8
+                set(e, 10 / (2 + 3))    // Should be 10 / (2 + 3) = 2
             }";
 
             var compiled = engine.Compile(script);
@@ -223,7 +223,7 @@ namespace EasyExpression
         public void Parser_Detects_Mismatched_Braces()
         {
             var engine = CreateEngine();
-            var script = "{ set(a, 1) "; // 缺少右大括号
+            var script = "{ set(a, 1) "; // Missing closing brace
 
             Should.Throw<Exception>(() => engine.Compile(script));
         }
@@ -232,7 +232,7 @@ namespace EasyExpression
         public void Parser_Detects_Mismatched_Parentheses()
         {
             var engine = CreateEngine();
-            var script = "{ set(a, (1 + 2) }"; // 函数调用缺少右括号
+            var script = "{ set(a, (1 + 2) }"; // Missing closing parenthesis
 
             Should.Throw<Exception>(() => engine.Compile(script));
         }
@@ -326,7 +326,7 @@ namespace EasyExpression
             var script = @"
             {
                 set(a, 1)
-                set(b, 2 + + 3)  // 错误在第4行
+                set(b, 2 + + 3)  // Error is on line 4
                 set(c, 4)
             }";
 

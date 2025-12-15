@@ -35,22 +35,22 @@ namespace EasyExpression
 			result.Success.ShouldBeTrue();
 			result.TotalNodes.ShouldBeGreaterThan(0);
 			
-			// 检查复杂度分析
+			// Check complexity analysis
 			result.Complexity.TotalExpressions.ShouldBeGreaterThan(0);
-			result.Complexity.ArithmeticOperations.ShouldBe(2); // 1+2 和字符串连接
-			result.Complexity.ConditionalStatements.ShouldBe(1); // if语句
+			result.Complexity.ArithmeticOperations.ShouldBe(2); // 1+2 and string concatenation
+			result.Complexity.ConditionalStatements.ShouldBe(1); // if statement
 			result.Complexity.FunctionCalls.ShouldBe(1); // ToUpper
-			result.Complexity.NestedBlockDepth.ShouldBe(1); // if块的嵌套深度
+			result.Complexity.NestedBlockDepth.ShouldBe(1); // Nested depth of the if block
 
-			// 检查使用的函数
+			// Check used functions
 			result.UsedFunctions.ShouldContain("ToUpper");
 
-			// 检查引用的字段
+			// Check referenced fields
 			result.ReferencedFields.Count.ShouldBe(2);
 			result.ReferencedFields.ShouldContain(f => f.Name == "field1" && f.TypeHint == "string");
 			result.ReferencedFields.ShouldContain(f => f.Name == "field2" && f.TypeHint == "decimal");
 
-			// 检查声明的变量
+			// Check declared variables
 			result.DeclaredVariables.ShouldContain("a");
 			result.DeclaredVariables.ShouldContain("b");
 			result.DeclaredVariables.ShouldContain("c");
@@ -94,11 +94,11 @@ namespace EasyExpression
 			var result = engine.Validate(script);
 
 			result.Success.ShouldBeTrue();
-			// 深度：根块(0) -> if块(1) -> if块(2) -> if块(3) -> set语句
-			// 或者：根块(0) -> if块(1) -> local块(2)
-			// 最深应该是 3 级嵌套（if -> if -> if）
+			// Depth: root block (0) -> if block (1) -> if block (2) -> if block (3) -> set statement
+			// Or: root block (0) -> if block (1) -> local block (2)
+			// The deepest nesting should be 3 levels (if -> if -> if)
 			result.Complexity.NestedBlockDepth.ShouldBeGreaterThanOrEqualTo(3);
-			result.Complexity.ConditionalStatements.ShouldBe(3); // 三个if语句
+			result.Complexity.ConditionalStatements.ShouldBe(3); // Three if statements
 		}
 
 		[Fact]
@@ -170,7 +170,7 @@ namespace EasyExpression
 
 			var result = engine.Validate(script);
 
-			// 如果脚本有语法错误，先检查错误信息
+			// If the script has a syntax error, check error details first
 			if (!result.Success)
 			{
 				var errorInfo = $"Error: {result.ErrorMessage} at line {result.ErrorLine}, column {result.ErrorColumn}";

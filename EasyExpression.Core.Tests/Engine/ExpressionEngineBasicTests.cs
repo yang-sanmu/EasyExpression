@@ -7,7 +7,7 @@ using Xunit;
 namespace EasyExpression.Core.Engine
 {
     /// <summary>
-    /// 表达式引擎基础功能单元测试
+    /// Basic unit tests for the expression engine
     /// </summary>
     public class ExpressionEngineBasicTests 
     {
@@ -177,7 +177,7 @@ namespace EasyExpression.Core.Engine
             result.HasError.ShouldBeFalse();
             result.Messages.Count.ShouldBe(1);
             result.Messages[0].Text.ShouldBe("Value must be positive");
-            result.Assignments.ShouldNotContainKey("result"); // 应该没有执行到SET语句
+            result.Assignments.ShouldNotContainKey("result"); // SET should not have been executed
         }
 
         [Fact]
@@ -232,7 +232,7 @@ namespace EasyExpression.Core.Engine
         {
             // Arrange
             var script = @"
-                IF ([score] >= 90 {  // 缺少右括号
+                IF ([score] >= 90 {  // Missing closing parenthesis
                     SET(grade, 'A')
                 }";
 
@@ -295,8 +295,8 @@ namespace EasyExpression.Core.Engine
 
             var script = @"
                 SET(counter, 0)
-                // 这里应该是一个会超出访问限制的循环脚本
-                // 由于简化，我们暂时使用一个复杂的表达式
+                // This should be a loop script that exceeds the visit limit
+                // For simplicity, we use a complex expression instead
                 SET(result, Max(1,2,3,4,5,6,7,8,9,10) + Min(1,2,3,4,5,6,7,8,9,10))";
             var inputs = new Dictionary<string, object?>();
 
@@ -304,8 +304,8 @@ namespace EasyExpression.Core.Engine
             var result = limitedEngine.Execute(script, inputs);
 
             // Assert
-            // 根据实际的核心引擎实现，这里可能成功或失败
-            // 主要是验证引擎能够处理限制参数
+            // Depending on the core engine implementation, this may succeed or fail
+            // The main goal is to verify the engine can handle limit options
             result.ShouldNotBeNull();
         }
     }

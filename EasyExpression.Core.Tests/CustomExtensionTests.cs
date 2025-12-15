@@ -52,7 +52,7 @@ namespace EasyExpression
 			public Type OutputType => typeof(decimal);
 			public bool TryConvert(object? value, out object? result)
 			{
-				result = 42m; // 覆盖内置 string->decimal 转换
+				result = 42m; // Override built-in string->decimal conversion
 				return true;
 			}
 		}
@@ -110,7 +110,7 @@ namespace EasyExpression
 		{
 			var options = new ExpressionEngineOptions();
 			var services = new EngineServices(options);
-			services.Functions.Register(new OverrideToUpperFunction()); // 覆盖内置 ToUpper
+			services.Functions.Register(new OverrideToUpperFunction()); // Override built-in ToUpper
 			var e = new ExpressionEngine(services);
 
 			var script = @"
@@ -127,7 +127,7 @@ namespace EasyExpression
 		{
 			var options = new ExpressionEngineOptions();
 			var services = new EngineServices(options);
-			services.Converters.Register(new OverrideStringToDecimalConverter()); // 覆盖内置 string->decimal
+			services.Converters.Register(new OverrideStringToDecimalConverter()); // Override built-in string->decimal
 			var e = new ExpressionEngine(services);
 
 			var inputs = new Dictionary<string, object?> { {"A", "123"} };

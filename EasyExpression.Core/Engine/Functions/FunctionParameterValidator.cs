@@ -5,12 +5,12 @@ using System.Linq;
 namespace EasyExpression.Core.Engine.Functions
 {
 	/// <summary>
-	/// 函数参数验证器，提供更详细的参数验证和错误信息
+	/// Function argument validator that provides more detailed validation and error messages.
 	/// </summary>
 	internal static class FunctionParameterValidator
 	{
 		/// <summary>
-		/// 验证参数数量
+		/// Validate argument count.
 		/// </summary>
 		public static void ValidateArgumentCount(string functionName, object?[] args, int min, int? max = null)
 		{
@@ -26,7 +26,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 验证参数数量（固定数量）
+		/// Validate argument count (fixed).
 		/// </summary>
 		public static void ValidateArgumentCount(string functionName, object?[] args, int expected)
 		{
@@ -37,7 +37,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 安全获取字符串参数
+		/// Safely get a string argument.
 		/// </summary>
 		public static string GetStringArgument(string functionName, object?[] args, int index, bool allowNull = false)
 		{
@@ -54,7 +54,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 安全获取数值参数
+		/// Safely get a numeric argument.
 		/// </summary>
 		public static decimal GetDecimalArgument(string functionName, object?[] args, int index, InvocationContext ctx)
 		{
@@ -87,7 +87,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 安全获取整数参数
+		/// Safely get an integer argument.
 		/// </summary>
 		public static int GetIntArgument(string functionName, object?[] args, int index, InvocationContext ctx, int? min = null, int? max = null)
 		{
@@ -114,7 +114,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 安全获取布尔参数
+		/// Safely get a boolean argument.
 		/// </summary>
 		public static bool GetBoolArgument(string functionName, object?[] args, int index, InvocationContext ctx)
 		{
@@ -140,7 +140,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 安全获取日期时间参数
+		/// Safely get a DateTime argument.
 		/// </summary>
 		public static DateTime GetDateTimeArgument(string functionName, object?[] args, int index, InvocationContext ctx)
 		{
@@ -166,7 +166,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 获取可选的字符串参数
+		/// Get an optional string argument.
 		/// </summary>
 		public static string? GetOptionalStringArgument(string functionName, object?[] args, int index, string? defaultValue = null)
 		{
@@ -176,7 +176,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 获取可选的整数参数
+		/// Get an optional integer argument.
 		/// </summary>
 		public static int? GetOptionalIntArgument(string functionName, object?[] args, int index, InvocationContext ctx, int? defaultValue = null)
 		{
@@ -185,7 +185,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 验证字符串选项参数
+		/// Validate a string option argument.
 		/// </summary>
 		public static string ValidateStringOption(string functionName, int argumentIndex, string value, params string[] validOptions)
 		{
@@ -198,7 +198,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 验证数值范围
+		/// Validate numeric range.
 		/// </summary>
 		public static decimal ValidateDecimalRange(string functionName, int argumentIndex, decimal value, decimal? min = null, decimal? max = null)
 		{
@@ -216,7 +216,7 @@ namespace EasyExpression.Core.Engine.Functions
 		}
 
 		/// <summary>
-		/// 验证字符串长度范围
+		/// Validate string length range.
 		/// </summary>
 		public static string ValidateStringLength(string functionName, int argumentIndex, string value, int? minLength = null, int? maxLength = null)
 		{
@@ -243,7 +243,7 @@ namespace EasyExpression.Core.Engine.Functions
 	}
 
 	/// <summary>
-	/// 增强的参数帮助类，提供更好的错误消息
+	/// Enhanced argument helper that provides better error messages.
 	/// </summary>
 	internal static class EnhancedArgHelper
 	{

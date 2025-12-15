@@ -3,14 +3,14 @@ using System;
 namespace EasyExpression.Core.Engine
 {
 	/// <summary>
-	/// 错误代码枚举
+	/// Error code enumeration.
 	/// </summary>
 	public enum ExpressionErrorCode
 	{
-		// 通用错误 (0-99)
+		// General errors (0-99)
 		Unknown = 0,
 		
-		// 解析错误 (100-199)
+		// Parse errors (100-199)
 		UnexpectedToken = 100,
 		UnterminatedString = 101,
 		InvalidNumber = 102,
@@ -19,7 +19,7 @@ namespace EasyExpression.Core.Engine
 		SyntaxError = 105,
 		InvalidFieldName = 106,
 		
-		// 运行时错误 (200-299)
+		// Runtime errors (200-299)
 		UnknownField = 200,
 		TypeMismatch = 201,
 		DivideByZero = 202,
@@ -31,7 +31,7 @@ namespace EasyExpression.Core.Engine
 		UnknownOperator = 208,
 		NullReference = 209,
 		
-		// 限制错误 (300-399)
+		// Limit errors (300-399)
 		MaxNodesExceeded = 300,
 		MaxVisitsExceeded = 301,
 		MaxDepthExceeded = 302,

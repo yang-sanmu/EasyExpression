@@ -136,7 +136,7 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 			}
 			if (comp == StringComparison.Ordinal)
 				return s.Replace(oldv, newv);
-			// 忽略大小写替换（增加超时）
+			// Case-insensitive replace (with timeout)
 			var options = comp == StringComparison.OrdinalIgnoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None;
 			var timeout = ctx.Options.RegexTimeoutMilliseconds > 0
 				? System.TimeSpan.FromMilliseconds(ctx.Options.RegexTimeoutMilliseconds)
@@ -196,7 +196,7 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 			var pattern = FunctionParameterValidator.GetStringArgument("RegexMatch", args, 1);
 			var flags = FunctionParameterValidator.GetOptionalStringArgument("RegexMatch", args, 2, string.Empty);
 
-			// 验证正则表达式模式
+			// Validate regex pattern
 			if (string.IsNullOrEmpty(pattern))
 			{
 				throw new ArgumentException("RegexMatch pattern cannot be empty");
@@ -204,14 +204,14 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 
 			var options = RegexOptions.Compiled;
 			
-			// 解析标志参数（仅支持 i/m）
+			// Parse flag argument (only i/m supported)
 			if (!string.IsNullOrEmpty(flags))
 			{
 				options |= ParseRegexFlags(flags);
 			}
 			else
 			{
-				// 如果没有明确指定标志，使用全局字符串比较设置
+				// If no explicit flags are specified, use the global string comparison setting
 				if (ctx.Options.StringComparison == StringComparison.OrdinalIgnoreCase)
 				{
 					options |= RegexOptions.IgnoreCase;
@@ -224,7 +224,7 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 
 			try
 			{
-				// 验证正则表达式语法
+				// Validate regex syntax
 				var regex = new Regex(pattern, options, timeout);
 				return regex.IsMatch(input);
 			}
@@ -242,7 +242,7 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 		{
 			var options = RegexOptions.None;
 			
-			// 仅支持：i(IgnoreCase), m(Multiline)
+			// Supported flags: i (IgnoreCase), m (Multiline)
 			if (string.IsNullOrEmpty(flags)) return options;
 			
 			foreach (char flag in flags.ToLowerInvariant())
@@ -257,7 +257,7 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 						break;
 					case ' ':
 					case '\t':
-						// 忽略空白字符
+						// Ignore whitespace characters
 						break;
 					default:
 						throw new ArgumentException($"RegexMatch unsupported flag: '{flag}'. Supported flags are: i (IgnoreCase), m (Multiline)");
@@ -268,5 +268,4 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 		}
 	}
 }
-
 

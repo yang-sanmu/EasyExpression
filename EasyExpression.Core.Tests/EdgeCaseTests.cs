@@ -94,7 +94,7 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            // 测试大数是否能正确处理
+            // Verify that very large numbers are handled correctly
             ((decimal)result.Assignments["a"]!).ShouldBeGreaterThan(999999999999999999999m);
             ((decimal)result.Assignments["b"]!).ShouldBeLessThan(-999999999999999999999m);
         }
@@ -286,9 +286,9 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeFalse();
-            // 结果会根据decimal的精度和舍入规则确定  
+            // The result depends on decimal precision and rounding rules
             result.Assignments["c"].ShouldNotBeNull();
-            // 检查结果类型并验证值
+            // Check the result type and validate the value
             if (result.Assignments["c"] is decimal decimalValue)
             {
                 decimalValue.ShouldBeGreaterThan(4m);
@@ -301,7 +301,7 @@ namespace EasyExpression
             }
             else
             {
-                // 如果不能解析为decimal，至少验证不为空
+                // If it cannot be parsed as decimal, at least verify it is not empty
                 result.Assignments["c"].ToString().ShouldNotBeNullOrEmpty();
             }
         }
@@ -334,7 +334,7 @@ namespace EasyExpression
             result.Assignments["a"].ShouldBe(1m);
             result.Assignments["b"].ShouldBe(3m);
             result.Assignments["c"].ShouldBe(4m);
-            result.Assignments.ContainsKey("d").ShouldBeFalse(); // 因为return而未执行
+            result.Assignments.ContainsKey("d").ShouldBeFalse(); // Not executed due to return
         }
 
         [Fact]
@@ -383,10 +383,10 @@ namespace EasyExpression
             var result = engine.Execute(script, inputs);
 
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(10m); // null作为0处理
-            result.Assignments["b"].ShouldBe(true); // null作为false处理
-            result.Assignments["c"].ShouldBe(new DateTime(2000, 1, 1)); // null使用默认日期
-            result.Assignments["d"].ShouldBe("suffix"); // null字符串作为空串处理
+            result.Assignments["a"].ShouldBe(10m); // null treated as 0
+            result.Assignments["b"].ShouldBe(true); // null treated as false
+            result.Assignments["c"].ShouldBe(new DateTime(2000, 1, 1)); // null uses default date
+            result.Assignments["d"].ShouldBe("suffix"); // null string treated as empty string
         }
     }
 }

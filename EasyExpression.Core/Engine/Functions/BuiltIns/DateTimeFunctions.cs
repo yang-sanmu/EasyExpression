@@ -113,7 +113,7 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 				case "d":
 					return (decimal)span.TotalDays;
 				case "":
-					return (decimal)span.TotalHours; // 默认 h
+					return (decimal)span.TotalHours; // Default: h
 				default:
 					throw new ArgumentException($"Unknown totalType: {type}");
 			}

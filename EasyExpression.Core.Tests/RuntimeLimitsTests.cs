@@ -21,7 +21,7 @@ namespace EasyExpression
         public void MaxDepth_Limit_Prevents_Deep_Nested_Expressions()
         {
             var engine = CreateEngine(o => o.MaxDepth = 3);
-            var script = @"{ set(a, ((((1+2)+3)+4)+5)) }"; // 超过深度限制
+            var script = @"{ set(a, ((((1+2)+3)+4)+5)) }"; // Exceeds depth limit
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -34,8 +34,8 @@ namespace EasyExpression
         [Fact]
         public void MaxDepth_Allows_Expressions_Within_Limit()
         {
-            var engine = CreateEngine(o => o.MaxDepth = 10); // 增加深度限制
-            var script = @"{ set(a, (((1+2)+3)+4)) }"; // 在深度限制内
+            var engine = CreateEngine(o => o.MaxDepth = 10); // Increase depth limit
+            var script = @"{ set(a, (((1+2)+3)+4)) }"; // Within depth limit
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -55,7 +55,7 @@ namespace EasyExpression
                 set(d, 4)
                 set(e, 5)
                 set(f, 6)
-            }"; // 超过节点限制
+            }"; // Exceeds node limit
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -83,7 +83,7 @@ namespace EasyExpression
             var script = @"
             {
                 set(a, 1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)
-            }"; // 大量的表达式访问
+            }"; // Many expression visits
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
@@ -108,7 +108,7 @@ namespace EasyExpression
         {
             var engine = CreateEngine(o => o.TimeoutMilliseconds = 100);
             
-            // 创建一个可能比较耗时的脚本
+            // Create a potentially time-consuming script
             var script = @"
             {
                 set(a, Sum(1,2,3,4,5,6,7,8,9,10))
@@ -120,14 +120,14 @@ namespace EasyExpression
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
-            // 注意：超时不一定总是触发，取决于执行速度
+            // Note: timeout may not always trigger, depending on execution speed
             if (result.HasError && result.ErrorMessage.Contains("timeout"))
             {
                 result.ErrorMessage.ShouldContain("timeout");
             }
             else
             {
-                // 如果没有超时，验证正常执行
+                // If there is no timeout, verify normal execution
                 result.HasError.ShouldBeFalse();
             }
         }
@@ -159,7 +159,7 @@ namespace EasyExpression
                 o.TimeoutMilliseconds = 1000;
             });
 
-            // 这个脚本应该因为深度限制而失败
+            // This script should fail due to the depth limit
             var script = @"{ set(a, (((1+2)+3)+4)) }";
 
             var result = engine.Execute(script, new Dictionary<string, object?>());
@@ -212,10 +212,10 @@ namespace EasyExpression
             result.HasError.ShouldBeFalse();
             result.Assignments["a"].ShouldBe(6m);
             result.Assignments["b"].ShouldBe(12m);
-            // 根据实际输出调整期望值
+            // Adjust expected value based on actual output
             result.Assignments["c"].ToString().ShouldNotBeNullOrEmpty();
             result.Assignments["d"].ShouldBe("large");
-            // 根据实际计算结果调整期望值: a=6, b=12, c=17, Sum(6,12,17) = 35
+            // Adjust expected value based on actual calculation result: a=6, b=12, c=17, Sum(6,12,17) = 35
             result.Assignments["result"].ShouldBe(35m);
         }
 
@@ -288,7 +288,7 @@ namespace EasyExpression
             var result = engine.Execute(script, new Dictionary<string, object?>());
 
             result.HasError.ShouldBeTrue();
-            // 应该因为某个限制而失败
+            // Should fail due to some limit
             (result.ErrorMessage.Contains("Max") || result.ErrorMessage.Contains("Script too large")).ShouldBeTrue();
         }
     }

@@ -32,11 +32,11 @@ namespace EasyExpression
                 ["c"] = 9.0m
             };
 
-            // 测试启用缓存的性能
+            // Test performance with cache enabled
             var engineWithCache = CreateEngine(opts => opts.EnableCompilationCache = true);
             var engineWithoutCache = CreateEngine(opts => opts.EnableCompilationCache = false);
 
-            // 预热
+            // Warm up
             var warmupResult1 = engineWithCache.Execute(script, inputs);
             if (warmupResult1.HasError)
             {
@@ -50,7 +50,7 @@ namespace EasyExpression
 
             const int iterations = 1000;
 
-            // 测试带缓存的性能
+            // Test performance with cache
             var sw1 = Stopwatch.StartNew();
             for (int i = 0; i < iterations; i++)
             {
@@ -59,7 +59,7 @@ namespace EasyExpression
             }
             sw1.Stop();
 
-            // 测试不带缓存的性能
+            // Test performance without cache
             var sw2 = Stopwatch.StartNew();
             for (int i = 0; i < iterations; i++)
             {
@@ -68,10 +68,10 @@ namespace EasyExpression
             }
             sw2.Stop();
 
-            // 缓存应该显著提高性能
+            // Cache should significantly improve performance
             sw1.ElapsedMilliseconds.ShouldBeLessThan(sw2.ElapsedMilliseconds);
             
-            // 输出性能数据以供参考
+            // Output performance data for reference
             var improvement = (double)(sw2.ElapsedMilliseconds - sw1.ElapsedMilliseconds) / sw2.ElapsedMilliseconds * 100;
             Console.WriteLine($"With cache: {sw1.ElapsedMilliseconds}ms");
             Console.WriteLine($"Without cache: {sw2.ElapsedMilliseconds}ms");
@@ -103,7 +103,7 @@ namespace EasyExpression
             var engine = CreateEngine();
             const int iterations = 500;
 
-            // 测试每次重新解析和执行的性能
+            // Test performance of parsing and executing each time
             var sw1 = Stopwatch.StartNew();
             for (int i = 0; i < iterations; i++)
             {
@@ -112,7 +112,7 @@ namespace EasyExpression
             }
             sw1.Stop();
 
-            // 测试预编译然后执行的性能
+            // Test performance of compile once then execute
             var compiled = engine.Compile(script);
             var sw2 = Stopwatch.StartNew();
             for (int i = 0; i < iterations; i++)
@@ -124,8 +124,8 @@ namespace EasyExpression
 
             var improvement = (double)(sw1.ElapsedMilliseconds - sw2.ElapsedMilliseconds) / sw1.ElapsedMilliseconds * 100;
 
-            // 在完整测试套件运行时，性能测试可能不稳定，这里只验证功能正确性
-            // 我们已经通过其他专门的性能测试验证了性能改进
+            // When running the full test suite, performance tests may be unstable; here we only verify correctness
+            // Performance improvements are covered by other dedicated performance tests
             Console.WriteLine($"Parse + Execute: {sw1.ElapsedMilliseconds}ms");
             Console.WriteLine($"Compiled Execute: {sw2.ElapsedMilliseconds}ms");
             Console.WriteLine($"Compile-once improvement: {improvement:F1}%");
@@ -139,14 +139,14 @@ namespace EasyExpression
             var script2 = "{ set(b, 2) }";
             var inputs = new Dictionary<string, object?>();
 
-            // 执行几个脚本填充缓存
+            // Execute a few scripts to fill the cache
             engine.Execute(script1, inputs);
             engine.Execute(script2, inputs);
 
-            // 清除缓存
+            // Clear cache
             engine.ClearCache();
 
-            // 清除后应该仍然工作正常
+            // Should still work after clearing
             var result = engine.Execute(script1, inputs);
             result.HasError.ShouldBeFalse();
             result.Assignments["a"].ShouldBe(1m);
@@ -157,7 +157,7 @@ namespace EasyExpression
         {
             var scriptParts = new List<string>();
             
-            // 生成一个较大的脚本来测试性能
+            // Generate a large script to test performance
             for (int i = 0; i < 50; i++)
             {
                 scriptParts.Add($"set(var{i}, {i} + field{i % 10})");
@@ -186,8 +186,8 @@ namespace EasyExpression
             result.HasError.ShouldBeFalse();
             result.Assignments.ShouldContainKey("total");
             
-            // 大脚本应该在合理时间内完成
-            sw.ElapsedMilliseconds.ShouldBeLessThan(1000); // 1秒内完成
+            // Large script should complete within a reasonable time
+            sw.ElapsedMilliseconds.ShouldBeLessThan(1000); // Should finish within 1 second
             
             Console.WriteLine($"Large script execution time: {sw.ElapsedMilliseconds}ms");
         }

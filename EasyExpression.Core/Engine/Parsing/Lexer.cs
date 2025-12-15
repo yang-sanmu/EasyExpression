@@ -43,35 +43,35 @@ namespace EasyExpression.Core.Engine.Parsing
 
 		public Token Next()
 		{
-			// 跳过空白与注释
+			// Skip whitespace and comments
 			while (true)
 			{
 				bool progressed = false;
-				// 空白处理
+				// Whitespace handling
 				while (char.IsWhiteSpace(Current))
 				{
 					progressed = true;
 					if (Current == '\n' || Current == '\r')
 					{
-						// 将 CRLF 和 LF 统一视作 NewLine
+						// Treat CRLF and LF uniformly as NewLine
 						if (Current == '\r' && Peek(1) == '\n') Advance(2);
 						else Advance();
 						return new Token(TokenKind.NewLine, "\n", _line, _col);
 					}
-					// 在字段名模式中，空格应作为标识符内容的一部分，不在此处跳过
+					// In field-name mode, spaces are part of the identifier and should not be skipped here
 					if (_fieldNameMode && Current == ' ')
 					{
 						break;
 					}
 					Advance();
 				}
-				// 注释处理：按选项控制；默认禁用
+				// Comment handling: controlled by options; disabled by default
 				if (_enableComments)
 				{
 					if (Current == '/' && Peek(1) == '/')
 					{
 						progressed = true;
-						// 跳到行尾但不消费换行，交由下一轮返回 NewLine
+						// Skip to end of line without consuming the newline; let the next iteration return NewLine
 						while (Current != '\0' && Current != '\n' && Current != '\r') Advance();
 						continue;
 					}
@@ -99,7 +99,7 @@ namespace EasyExpression.Core.Engine.Parsing
 			char c = Current;
 			if (_fieldNameMode && c != ']' && c != ':')
 			{
-				// 在字段名模式下，收集到 ']' 或 ':' 为止，允许空格
+				// In field-name mode, collect until ']' or ':'; spaces are allowed
 				var sb = new StringBuilder();
 				while (Current != '\0' && Current != ']' && Current != ':')
 				{

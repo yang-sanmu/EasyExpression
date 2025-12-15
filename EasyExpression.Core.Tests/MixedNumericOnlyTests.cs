@@ -40,7 +40,7 @@ namespace EasyExpression
             result.HasError.ShouldBeFalse();
             result.Assignments["a"].ShouldBe(true);
             result.Assignments["b"].ShouldBe(true);
-            result.Assignments["c"].ShouldBe(false); // 转换失败则退回字符串比较
+			result.Assignments["c"].ShouldBe(false); // If conversion fails, fall back to string comparison
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace EasyExpression
             }";
             var result = engine.Execute(script, new Dictionary<string, object?>());
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(true);  // 字符串比较（忽略大小写）
+			result.Assignments["a"].ShouldBe(true);  // String comparison (ignore-case)
             result.Assignments["b"].ShouldBe(false); // 'abc' vs '123'
         }
 
@@ -64,7 +64,7 @@ namespace EasyExpression
             var script = @"{ set(a, 2.0 == 2) }";
             var result = engine.Execute(script, new Dictionary<string, object?>());
             result.HasError.ShouldBeFalse();
-            result.Assignments["a"].ShouldBe(true); // 数字与数字仍按数值比较
+			result.Assignments["a"].ShouldBe(true); // Number-to-number still compares numerically
         }
     }
 }

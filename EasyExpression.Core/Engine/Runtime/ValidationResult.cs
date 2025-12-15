@@ -13,19 +13,19 @@ namespace EasyExpression.Core.Engine.Runtime
 		public int TotalNodes { get; set; }
 		public Engine.ExpressionErrorCode ErrorCode { get; set; }
 
-		// 新增：脚本复杂度信息
+		// Added: script complexity info
 		public ScriptComplexity Complexity { get; set; } = new ScriptComplexity();
 
-		// 新增：使用的函数列表
+		// Added: list of used functions
 		public List<string> UsedFunctions { get; set; } = new List<string>();
 
-		// 新增：引用的字段列表
+		// Added: list of referenced fields
 		public List<FieldReference> ReferencedFields { get; set; } = new List<FieldReference>();
 
-		// 新增：变量声明列表
+		// Added: list of declared variables
 		public List<string> DeclaredVariables { get; set; } = new List<string>();
 
-		// 新增：警告信息列表
+		// Added: list of warnings
 		public List<ValidationWarning> Warnings { get; set; } = new List<ValidationWarning>();
 	}
 
