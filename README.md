@@ -37,7 +37,7 @@ Or via `PackageReference`:
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="EasyExpression.Core" Version="0.1.0" />
+  <PackageReference Include="EasyExpression.Core" Version="1.0.0" />
 </ItemGroup>
 ```
 
