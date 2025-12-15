@@ -21,13 +21,30 @@
 
 ## 📦 安装
 
-添加对 `EasyExpression.Core` 项目的引用，或构建并引用 DLL。
+从 NuGet 安装：
 
 ```bash
-# 克隆仓库
-git clone https://github.com/yang-sanmu/EasyExpression.git
+dotnet add package EasyExpression.Core
+```
 
-# 构建项目
+或使用 NuGet 包管理器（Package Manager）：
+
+```powershell
+Install-Package EasyExpression.Core
+```
+
+或使用 `PackageReference`：
+
+```xml
+<ItemGroup>
+  <PackageReference Include="EasyExpression.Core" Version="0.1.0" />
+</ItemGroup>
+```
+
+### 从源码构建（可选）
+
+```bash
+git clone https://github.com/yang-sanmu/EasyExpression.git
 cd EasyExpression
 dotnet build
 ```

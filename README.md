@@ -21,13 +21,30 @@ A lightweight, extensible expression engine for .NET that supports scripting wit
 
 ## 📦 Installation
 
-Add reference to `EasyExpression.Core` project or build and reference the DLL.
+Install from NuGet:
 
 ```bash
-# Clone the repository
-git clone https://github.com/yang-sanmu/EasyExpression.git
+dotnet add package EasyExpression.Core
+```
 
-# Build the project
+Or via Package Manager:
+
+```powershell
+Install-Package EasyExpression.Core
+```
+
+Or via `PackageReference`:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="EasyExpression.Core" Version="0.1.0" />
+</ItemGroup>
+```
+
+### Build from source (optional)
+
+```bash
+git clone https://github.com/yang-sanmu/EasyExpression.git
 cd EasyExpression
 dotnet build
 ```
