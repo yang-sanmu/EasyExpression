@@ -1,11 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11222.16 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyExpression.Core", "EasyExpression.Core\EasyExpression.Core.csproj", "{7CAC64ED-EBBA-E838-016C-C005168EC424}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyExpression.Core.Tests", "EasyExpression.Core.Tests\EasyExpression.Core.Tests.csproj", "{6A930453-A45C-40F6-C0C9-02A2B20C15DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{18B92F9E-FDDD-49AD-8FE0-B9DEF9BD9C3E}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+		README.zh-CN.md = README.zh-CN.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
