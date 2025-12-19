@@ -270,6 +270,15 @@ var engine = factory.Create(options =>
 });
 ```
 
+### StringConcat Modes
+
+`StringConcat` only affects the `+` operator when at least one side is a string.
+
+| Mode | Behavior | Examples |
+|------|----------|----------|
+| `PreferStringIfAnyString` | If either operand is a string, always convert both sides to string (via converters when available) and concatenate. | `'1' + 2` → `"12"`, `ToDateTime('2024-01-01 00:00:00') + ' UTC'` → `"2024-01-01 00:00:00 UTC"` |
+| `PreferNumericIfParsable` | If either operand is a string, first try parsing both sides as `decimal`. If both are parsable, do numeric addition; otherwise fall back to string concatenation. | `'1' + '2'` → `3`, `'1' + 'b'` → `"1b"` |
+
 ### Equality Coercion Modes
 
 | Mode | Behavior |
