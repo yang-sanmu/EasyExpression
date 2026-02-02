@@ -131,6 +131,28 @@ namespace EasyExpression.Core.Engine.Functions.BuiltIns
 			return dt.ToString(fmt);
 		}
 	}
+
+    public sealed class DayOfWeekFunction : IFunction
+    {
+        public string Name => "DayOfWeek";
+        public object? Invoke(object?[] args, InvocationContext ctx)
+        {
+            if (args.Length != 1) throw new ArgumentException("DayOfWeek expects 1 args");
+            var dt = ArgHelper.GetDateTime(args, 0, ctx);
+			return (int)dt.DayOfWeek;
+        }
+    }
+
+    public sealed class DayOfYearFunction : IFunction
+    {
+        public string Name => "DayOfYear";
+        public object? Invoke(object?[] args, InvocationContext ctx)
+        {
+            if (args.Length != 1) throw new ArgumentException("DayOfYear expects 1 args");
+            var dt = ArgHelper.GetDateTime(args, 0, ctx);
+            return (int)dt.DayOfYear;
+        }
+    }
 }
 
 

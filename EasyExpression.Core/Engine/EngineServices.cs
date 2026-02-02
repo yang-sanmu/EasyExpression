@@ -59,6 +59,8 @@ namespace EasyExpression.Core.Engine
             Functions.Register(new AbsFunction());
             Functions.Register(new ToDateTimeFunction());
             Functions.Register(new FormatDateTimeFunction());
+            Functions.Register(new DayOfWeekFunction());
+            Functions.Register(new DayOfYearFunction());
             Functions.Register(new AddDayFunction());
             Functions.Register(new AddDaysFunction());
             Functions.Register(new AddHoursFunction());

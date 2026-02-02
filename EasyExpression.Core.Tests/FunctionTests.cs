@@ -94,6 +94,8 @@ namespace EasyExpression
 				set(c, AddHours(ToDateTime('2024-01-01 00:00:00'), 2))
 				set(d, TimeSpan(ToDateTime('2024-01-01 00:00:00'), ToDateTime('2024-01-02 00:00:00'), 'd'))
 				set(e, FormatDateTime(ToDateTime('2024-01-01 00:00:00'), 'yyyyMMdd'))
+				set(f, DayOfWeek(now))
+				set(g, DayOfYear(now))
 			}";
 			var res = e.Execute(script, new Dictionary<string, object?>());
 			res.Assignments["a"].ShouldBe(new DateTime(2024,1,1,0,0,0));
@@ -102,7 +104,9 @@ namespace EasyExpression
 			res.Assignments["c"].ShouldBe(new DateTime(2024,1,1,2,0,0));
 			res.Assignments["d"].ShouldBe(1m);
 			res.Assignments["e"].ShouldBe("20240101");
-		}
+            res.Assignments["f"].ShouldBe((int)DateTime.Now.DayOfWeek);
+            res.Assignments["g"].ShouldBe((int)DateTime.Now.DayOfYear);
+        }
 
 		[Fact]
 		public void RegexMatch_Options()
